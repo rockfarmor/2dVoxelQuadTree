@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="300" height="180" tilewidth="16" tileheight="16" nextobjectid="128">
- <tileset firstgid="1" name="mininicular" tilewidth="16" tileheight="16" tilecount="128">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="300" height="180" tilewidth="16" tileheight="16" nextobjectid="128">
+ <tileset firstgid="1" name="mininicular" tilewidth="16" tileheight="16" tilecount="128" columns="8">
   <image source="mininicular_extended.png" width="128" height="256"/>
  </tileset>
- <tileset firstgid="129" name="Tree - Pine 00" tilewidth="16" tileheight="16" tilecount="256">
+ <tileset firstgid="129" name="Tree - Pine 00" tilewidth="16" tileheight="16" tilecount="256" columns="16">
   <image source="Pine Trees/Tree - Pine 00.png" width="256" height="256"/>
  </tileset>
- <tileset firstgid="385" name="Tree - Pine 02" tilewidth="16" tileheight="16" tilecount="64">
+ <tileset firstgid="385" name="Tree - Pine 02" tilewidth="16" tileheight="16" tilecount="64" columns="8">
   <image source="Pine Trees/Tree - Pine 02.png" width="128" height="128"/>
  </tileset>
- <tileset firstgid="449" name="Tree - Pine 05" tilewidth="16" tileheight="16" tilecount="256">
+ <tileset firstgid="449" name="Tree - Pine 05" tilewidth="16" tileheight="16" tilecount="256" columns="16">
   <image source="Pine Trees/Tree - Pine 05.png" width="256" height="256"/>
  </tileset>
- <tileset firstgid="705" name="min" tilewidth="16" tileheight="16" tilecount="80">
+ <tileset firstgid="705" name="min" tilewidth="16" tileheight="16" tilecount="80" columns="10">
   <image source="min.png" width="160" height="128"/>
  </tileset>
  <layer name="Background" width="300" height="180">

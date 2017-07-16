@@ -16,6 +16,7 @@
 
 
     <script src="p5sat.js"></script>
+    <script src="p5.graphicsUi.js"></script>
 
     <script src="sketch.js"></script>
     <script src="Hero.js"></script>
@@ -43,6 +44,25 @@
     <div class="container">
         <div class="jumbotron" style="padding: 10px; width: 820px">
             <div id="sketch-holder" style="width: 800px; height: 500px;"></div>
+            <input type="color" id="myColor">
+            <br />
+            <button onclick="changeGui('bg')">Change Gui Background</button>
+            <br />
+            <button onclick="changeGui('button')">Change Gui Button-Background</button>
+            <br />
+            <button onclick="changeGui('bg')">Change Gui Background</button>
+            <script>
+                function changeGui(what){
+                    var clr = hexToP5Color(document.getElementById("myColor").value);
+                    if (what == "bg"){
+                        gui.graphicsUiStyle.setBackgroundColor(clr);
+                    } else if (what == "button"){
+                        gui.graphicsUiStyle.setButtonColor(clr);
+                    }
+                }
+            </script>
+
+
         </div>
 
     </div><!--/.container-->

@@ -25,7 +25,7 @@ var turrets;
 
 var explosion;
 
-
+var gui;
 
 
 function preload(){
@@ -45,8 +45,40 @@ function preload(){
 
 }
 
+function add1(){
+    addtext("1")
+}
+function add2(){
+    addtext("2")
+}
+function add3(){
+    addtext("3")
+}
+function add4(){
+    addtext("4")
+}
+function add5(){
+    addtext("5")
+}
+function add6(){
+    addtext("6")
+}
+function add7(){
+    addtext("7")
+}
+function add8(){
+    addtext("8")
+}
+function add9(){
+    addtext("9")
+}
+function add0(){
+    addtext("0")
+}
 
-
+function addtext(text){
+    gui.windows[0].textFields[0].addText(" "+text);
+}
 
 
 function setup() {
@@ -83,6 +115,53 @@ function setup() {
     document.getElementById('sketch-holder').appendChild(
         document.getElementById('defaultCanvas0')
     );
+
+    gui = new GraphicsUi();
+    var gStyle = new GraphicsUiStyle();
+    gStyle.setBackgroundColor(22,147,165,240);
+    gStyle.setBackgroundStroke(255,255,255,50)
+    gStyle.setButtonColor(30,120,30, 200);
+    gStyle.setButtonStroke(135,124,111);
+    gStyle.noButtonStroke = true;
+
+
+    gui.setGraphicsUiStyle(gStyle);
+
+    var win = new GraphicsWindow(70,70,500,400, true, false);
+    gui.addWindow(win);
+
+    var but = win.addButton(win.width - win.topbarHeight, 1, win.topbarHeight, win.topbarHeight, win.close.bind(win));
+    but.color = color(255,0,0)
+    win.topbar = true;
+
+    win.addTextfield("", 2, win.topbarHeight+1, 300,100).updateText("Hej")
+    var startX = 2;
+    var startY = win.topbarHeight+1 + 100;
+    win.addButton(startX, startY, 50, 50, add1);
+    win.addButton(startX+51, startY, 50, 50,add2)
+    win.addButton(startX+102, startY, 50, 50,add3)
+    win.addButton(startX, startY+51, 50, 50,add4);
+    win.addButton(startX+51, startY+51, 50, 50,add5)
+    win.addButton(startX+102, startY+51, 50, 50,add6)
+    win.addButton(startX, startY+102, 50, 50,add7);
+    win.addButton(startX+51, startY+102, 50, 50,add8)
+    win.addButton(startX+102, startY+102, 50, 50,add9)
+    win.addButton(startX, startY+102+51, 100, 50,add0)
+
+    var oldWin = win;
+
+    win = new GraphicsWindow(100,100,500,400, true, false);
+    gui.addWindow(win);
+    win.addTextfield("", 2, win.topbarHeight+1, 300,100).updateText("Limitless najs shit")
+    win.title = "axD"
+    but = win.addButton(win.width - win.topbarHeight, 1, win.topbarHeight, win.topbarHeight, win.close.bind(win));
+    but.color = color(255,0,0)
+    win.topbar = true;
+
+
+    win = new GraphicsWindow(0, 0, width-1, 30);
+    win.addButton(100, 0, win.height, win.height, oldWin.open.bind(oldWin));
+    gui.addWindow(win)
 
 }
 
@@ -207,6 +286,7 @@ function keyPressed(){
 
 
 function draw() {
+    cursor(ARROW);
     background(41);
     update();
     push()
@@ -245,7 +325,9 @@ function draw() {
 
     //Draw from debug object
     pop();
-    debug.draw();
+    gui.update();
+    gui.draw();
+    //debug.draw();
     push();
     fill(255);
     text("FPS: " + getFrameRate().toFixed(2) + " | VEL: " + player.vel.mag().toFixed(2), 10, height - 20);
