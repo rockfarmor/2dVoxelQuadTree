@@ -27,6 +27,12 @@ var explosion;
 
 var gui;
 
+var font1;
+
+const CANVWIDTH = 800;
+const CANVHEIGHT = 500;
+
+
 
 function preload(){
     debug = new Debugger();
@@ -40,7 +46,7 @@ function preload(){
     tiledMap.layer.push(loadImage("Assets/Map/map.png"));
 
     explosion = new Tileset(loadImage("Assets/Explosion.png"), 96, 96)
-
+    font1 = loadFont("assets/Fonts/corbert.otf");
     loadXML("assets/Map/map.tmx", populate);
 
 }
@@ -82,8 +88,8 @@ function addtext(text){
 
 
 function setup() {
-    createCanvas(800, 500);
-
+    createCanvas(CANVWIDTH, CANVHEIGHT);
+    // turn off HPDI displays (like retina)
     inits();
 
     T_RESPONSE = new Response();
@@ -123,7 +129,7 @@ function setup() {
     gStyle.setButtonColor(30,120,30, 200);
     gStyle.setButtonStroke(135,124,111);
     gStyle.noButtonStroke = true;
-
+    gStyle.setFont(font1);
 
     gui.setGraphicsUiStyle(gStyle);
 
@@ -132,35 +138,54 @@ function setup() {
 
     var but = win.addButton(win.width - win.topbarHeight, 1, win.topbarHeight, win.topbarHeight, win.close.bind(win));
     but.color = color(255,0,0)
+    but.text = "X"
     win.topbar = true;
 
-    win.addTextfield("", 2, win.topbarHeight+1, 300,100).updateText("Hej")
+    var tff = win.addTextfield("", 2, win.topbarHeight+1, 300,100);
+    tff.updateText("Numbers: ")
+    tff.fontSize = 16;
+    tff.horizAlign = RIGHT
+
+    var slid = win.addSlider(2 + 300, win.topbarHeight+1, 100, DOWN);
+    slid.func = tff.setOffsetY.bind(tff);
+
     var startX = 2;
     var startY = win.topbarHeight+1 + 100;
-    win.addButton(startX, startY, 50, 50, add1);
-    win.addButton(startX+51, startY, 50, 50,add2)
-    win.addButton(startX+102, startY, 50, 50,add3)
-    win.addButton(startX, startY+51, 50, 50,add4);
-    win.addButton(startX+51, startY+51, 50, 50,add5)
-    win.addButton(startX+102, startY+51, 50, 50,add6)
-    win.addButton(startX, startY+102, 50, 50,add7);
-    win.addButton(startX+51, startY+102, 50, 50,add8)
-    win.addButton(startX+102, startY+102, 50, 50,add9)
-    win.addButton(startX, startY+102+51, 100, 50,add0)
+    win.addButton(startX, startY, 50, 50, add1).text = "1";
+    win.addButton(startX+51, startY, 50, 50,add2).text = "2";
+    win.addButton(startX+102, startY, 50, 50,add3).text = "3";
+    win.addButton(startX, startY+51, 50, 50,add4).text = "4";
+    win.addButton(startX+51, startY+51, 50, 50,add5).text = "5";
+    win.addButton(startX+102, startY+51, 50, 50,add6).text = "6";
+    win.addButton(startX, startY+102, 50, 50,add7).text = "7";
+    win.addButton(startX+51, startY+102, 50, 50,add8).text = "8";
+    win.addButton(startX+102, startY+102, 50, 50,add9).text = "9";
+    win.addButton(startX, startY+102+51, 101, 50,add0).text = "0";
 
     var oldWin = win;
 
     win = new GraphicsWindow(100,100,500,400, true, false);
+    var oldWin2 = win;
     gui.addWindow(win);
-    win.addTextfield("", 2, win.topbarHeight+1, 300,100).updateText("Limitless najs shit")
+    var tf = win.addTextfield("", 2, win.topbarHeight+10, 300,100);
+    /*tf.updateText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce venenatis tortor dui, nec vehicula nunc auctor et. Morbi vitae nibh eu quam lacinia iaculis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nunc tincidunt hendrerit sollicitudin. Integer tortor massa, varius ut eleifend ut, maximus quis felis. Pellentesque porta et tortor at tincidunt. Quisque posuere nec magna sit amet sodales. Praesent ultrices mauris eu risus mollis, blandit commodo quam volutpat. Ut dapibus dolor eget lectus sollicitudin sagittis. Nullam pretium, lorem in luctus ultrices, augue augue efficitur mauris, sed auctor tortor nisi et nulla. Aenean suscipit ex eget augue convallis scelerisque. Quisque ultricies libero sit amet eros imperdiet venenatis.");
+    tf.horizAlign = CENTER;
+    tf.vertAlign = CENTER;*/
+
     win.title = "axD"
     but = win.addButton(win.width - win.topbarHeight, 1, win.topbarHeight, win.topbarHeight, win.close.bind(win));
+    but.text = "X";
     but.color = color(255,0,0)
+
+
+
+
     win.topbar = true;
 
 
     win = new GraphicsWindow(0, 0, width-1, 30);
     win.addButton(100, 0, win.height, win.height, oldWin.open.bind(oldWin));
+    win.addButton(100 + win.height+1, 0, win.height, win.height, oldWin.open.bind(oldWin2));
     gui.addWindow(win)
 
 }

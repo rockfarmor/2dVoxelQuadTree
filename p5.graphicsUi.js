@@ -1,11 +1,32 @@
-var GraphicsUi = function() {
+const DOWN = "down";
 
+/**
+ *
+ * The main class for the p5.GraphicsUi library
+ *
+ * @constructor GraphicsUi
+ * @return {Object} A new GraphicsUi object.
+ */
+
+var GraphicsUi = function() {
     this.windows = [];
     this.mouseLeftDown = false;
     this.mouseLeftWasDown = false;
     this.graphicsUiStyle = new GraphicsUiStyle();
 
     this.draggedWindow = null;
+
+    this.update = function() {
+        this.mouseLeftDown = mouseIsPressed && mouseButton == LEFT;
+
+        this.activeWindow();
+
+        this.dragWindow();
+
+        this.checkButtons();
+
+        this.mouseLeftWasDown = this.mouseLeftDown;
+    }
 
     this.addWindow = function(x, y = 0, width = 0, height = 0, open = true, isStatic = true) {
         if (x instanceof GraphicsWindow)
@@ -19,7 +40,13 @@ var GraphicsUi = function() {
     }
 
     this.dragWindow = function() {
-        var id = this.clickedWindow();
+        //Check if mouse in topBar, then change cursor
+        var id = this.mouseInWindow();
+        if (id >= 0)
+            if (this.windows[id].inBoundsTopbar(mouseX, mouseY))
+                cursor(MOVE);
+
+        id = this.clickedWindow();
         if (id >= 0 && !this.windows[id].static) {
             if (this.draggedWindow == null && this.windows[id].inBoundsTopbar(mouseX, mouseY))  {
                 this.draggedWindow = {
@@ -42,26 +69,28 @@ var GraphicsUi = function() {
         }
     }
 
-
-    this.update = function() {
-        this.mouseLeftDown = mouseIsPressed && mouseButton == LEFT;
-
-        this.activeWindow();
-
-        this.dragWindow();
-
-        this.checkButtons();
-
-        this.mouseLeftWasDown = this.mouseLeftDown;
-    }
-
     this.checkButtons = function() {
         var clicked = this.mouseInWindow();
         if (clicked >= 0) {
+
             for (var i = 0; i < this.windows[clicked].buttons.length; i++) {
+                var button = this.windows[clicked].buttons[i];
                 if (this.mouseLeftDown)
-                    this.windows[clicked].buttons[i].buttonDown(mouseX, mouseY);
+                    button.buttonDown(mouseX, mouseY);
+                if (button.inBounds(mouseX, mouseY)) {
+                    cursor(HAND);
+                }
             }
+
+
+            for (var i = 0; i < this.windows[clicked].sliders.length; i++) {
+                var slider = this.windows[clicked].sliders[i];
+                if (this.mouseLeftDown) {
+                    slider.drag(mouseX, mouseY);
+                }
+
+            }
+
         }
 
     }
@@ -198,11 +227,18 @@ var GraphicsWindow = function(x, y, width, height, open = true, isStatic = true)
 
     this.buttons = [];
     this.textFields = [];
+    this.sliders = [];
 
     this.addButton = function(x, y, width, height, func = null) {
         var but = new GraphicsButton(x, y, width, height, func, this);
         this.buttons.push(but);
         return but;
+    }
+
+    this.addSlider = function(x, y, length, align, min = 0, max = 1, step = 0.1) {
+        var slid = new GraphicsSlider(x, y, length, align, min, max, step, this);
+        this.sliders.push(slid);
+        return slid;
     }
 
     this.addTextfield = function(text, x, y, width = -1, height = -1) {
@@ -245,12 +281,12 @@ var GraphicsWindow = function(x, y, width, height, open = true, isStatic = true)
             rect(this.x, this.y, this.width, this.height);
 
             if (this.topbar) {
-                if (this.inBoundsTopbar(mouseX, mouseY))
-                    cursor(MOVE);
                 fill(0, 0, 0, 100);
                 noStroke();
                 rect(this.x + 1, this.y + 1, this.width - 1, this.topbarHeight);
                 fill(255)
+                textFont("Helvetica");
+                textSize(12);
                 textAlign(LEFT, CENTER)
                 text(this.title, this.x + 10, this.y, this.width - 10, this.topbarHeight);
             }
@@ -261,6 +297,10 @@ var GraphicsWindow = function(x, y, width, height, open = true, isStatic = true)
 
             for (var i = 0; i < this.textFields.length; i++) {
                 this.textFields[i].draw(gStyle);
+            }
+
+            for (var i = 0; i < this.sliders.length; i++) {
+                this.sliders[i].draw(gStyle);
             }
 
 
@@ -279,11 +319,11 @@ var GraphicsButton = function(x, y, width, height, func = null, parent = null) {
     this.parent = parent;
     this.down = false;
     this.wasDown = false;
+    this.text = "";
 
     this.buttonDown = function(x, y) {
         if (this.inBounds(x, y)) {
             this.down = true;
-
         } else {
             this.down = false;
         }
@@ -311,10 +351,6 @@ var GraphicsButton = function(x, y, width, height, func = null, parent = null) {
 
     this.draw = function(gStyle) {
         this.clicked();
-        if (this.inBounds(mouseX, mouseY)){
-            cursor(HAND);
-        }
-
 
         var offsetX = 0;
         var offsetY = 0;
@@ -337,13 +373,17 @@ var GraphicsButton = function(x, y, width, height, func = null, parent = null) {
         if (!this.down)
             fill(col);
         else {
-            fill(red(col) * 3/4, green(col) * 3/4, blue(col) * 3/4, alpha(col))
+            fill(red(col) * 3 / 4, green(col) * 3 / 4, blue(col) * 3 / 4, alpha(col))
             offsetX += 1;
             offsetY += 1;
             offsetWidth -= 2;
             offsetHeight -= 2;
         }
         rect(this.x + offsetX, this.y + offsetY, this.width + offsetWidth, this.height + offsetHeight);
+        fill(255);
+        textAlign(CENTER, CENTER)
+
+        text(this.text, this.x + offsetX, this.y + offsetY, this.width, this.height);
 
         this.wasDown = this.down;
         this.down = false;
@@ -351,49 +391,178 @@ var GraphicsButton = function(x, y, width, height, func = null, parent = null) {
 
 }
 
-var GraphicsTextField = function(textt, x, y, width = -1, height = -1, parent = null){
+var GraphicsTextField = function(textt, x, y, width = -1, height = -1, parent = null) {
     this.x = x;
     this.y = y;
     this.text = textt;
     this.width = width;
     this.height = height;
     this.font = null;
+    this.fontSize = 12;
     this.color = null;
     this.parent = parent;
-    this.debug = true;
 
-    this.addText = function(text){
+    this.graphics = createGraphics(this.width, this.height);
+    this.offsetY = 0;
+
+    this.horizAlign = LEFT;
+    this.vertAlign = TOP;
+
+    this.generateMask = function() {
+        var img = createImage(CANVWIDTH, CANVHEIGHT);
+        img.loadPixels();
+        var offsetX = 0;
+        var offsetY = 0;
+        /*if (parent != null) {
+            offsetX += parent.x;
+            offsetY += parent.y;
+        }*/
+
+        for (var x = 0; x < img.width; x++) {
+            for (var y = 0; y < img.height; y++) {
+                if (x >= this.x + offsetX && x < this.x + offsetX + this.width && y >= this.y + offsetY && y < this.y + offsetY + this.height)
+                    img.set(x, y, [255, 255, 255, 255]);
+                else
+                    img.set(x, y, [0,0,0, 255]);
+            }
+        }
+        img.updatePixels();
+        return img;
+    }
+
+    this.mask = this.generateMask();
+
+
+    this.setOffsetY = function(val) {
+        this.offsetY = -val * 100;
+    }
+
+    this.addText = function(text) {
         this.text += text;
     }
 
-    this.updateText = function(text){
+    this.updateText = function(text) {
         this.text = text;
     }
 
-    this.draw = function(gStyle){
+    this.draw = function(gStyle) {
         var offsetX = 0;
         var offsetY = 0;
         if (parent != null) {
-            offsetX = parent.x;
-            offsetY = parent.y;
+            offsetX += parent.x;
+            offsetY += parent.y;
         }
-        if (this.debug){
-            fill(50,50,50,50);
-            rect(this.x + offsetX, this.y + offsetY, this.width, this.height)
+
+
+        //fill(50, 50, 50, 10);
+        //rect(this.x + offsetX, this.y + offsetY, this.width, this.height)
+        //image(this.mask, offsetX, offsetY - this.offsetY)
+        var density = displayDensity();
+        this.graphics.pixelDensity(density);
+
+
+        for (var i = 0; i < 10; i++) {
+            this.graphics.fill(255,0,0)
+            this.graphics.rect(i + 10, 20, 2, 2)
         }
+
         if (this.color == null)
-            fill(50);
+            this.graphics.fill(50);
         else
-            fill(this.color);
+            this.graphics.fill(this.color);
+        /*if (this.font == null)
+            this.graphics.textFont(gStyle.font);
+        else
+            this.graphics.textFont(this.font);
+
+        this.graphics.textSize(this.fontSize);
 
 
-        textAlign(LEFT, TOP)
-        if (this.width <= 0 || this.height <= 0){
-            text(this.text, this.x + offsetX, this.y + offsetY);
+        this.graphics.textAlign(this.horizAlign, this.vertAlign)*/
+
+
+        this.graphics.background(255,255,255,0)
+        this.graphics.textSize(12);
+
+        /*if (this.width <= 0) {
+            this.graphics.text(this.text, 0, 0);
         } else {
-            text(this.text, this.x + offsetX, this.y + offsetY, this.width, this.height);
+            this.graphics.text(this.text, 0, 20, this.width);
+        }*/
+        this.graphics.text(this.text, 0, 20, this.width);
+
+        image(this.graphics, this.x + offsetX, this.y + offsetY)
+    }
+
+}
+
+var GraphicsSlider = function(x, y, length, align, min = 0, max = 1, step = 0.1, parent = null) {
+    this.x = x;
+    this.y = y;
+    this.length = length;
+    this.thickness = 2;
+    this.align = align;
+
+    this.value = 0.5;
+
+    this.parent = parent;
+
+    this.min = min;
+    this.max = max;
+    this.step = 0.1;
+    this.color = color(0, 0, 255);
+    this.func = null;
+
+    this.drag = function(mouseX, mouseY) {
+        if (this.inBounds(mouseX, mouseY)) {
+            var offsetX = 0;
+            var offsetY = 0;
+            if (this.parent) {
+                offsetX = this.parent.x;
+                offsetY = this.parent.y;
+            }
+            //var val = (this.value - this.min)/(this.max - this.min)
+            var val = map((mouseY - this.y - offsetY) / this.max, 0, this.length, this.min, this.max);
+            this.value = val;
+
+            if (this.func) {
+                this.func(this.value);
+            }
+
         }
     }
+
+
+
+    this.inBounds = function(x, y) {
+        var offsetX = 0;
+        var offsetY = 0;
+        if (this.parent) {
+            offsetX = this.parent.x;
+            offsetY = this.parent.y;
+        }
+        return x >= this.x + offsetX - this.thickness * 3 / 2 && x < this.x + offsetX + this.thickness * 3 && y >= this.y + offsetY && y < this.y + offsetY + this.length;
+    }
+
+
+    this.draw = function(gStyle) {
+
+        var offsetX = 0;
+        var offsetY = 0;
+        if (this.parent) {
+            offsetX = this.parent.x;
+            offsetY = this.parent.y;
+        }
+
+        noStroke();
+        fill(0, 0, 0, 100);
+        rect(this.x - floor(this.thickness / 2) + offsetX, this.y + offsetY, this.thickness, this.length);
+        fill(this.color);
+        ellipse(this.x + offsetX, this.y + offsetY + this.length * this.value, this.thickness * 2);
+
+
+    }
+
 
 
 
@@ -403,9 +572,6 @@ var GraphicsTextField = function(textt, x, y, width = -1, height = -1, parent = 
 
 
 }
-
-
-
 
 
 
