@@ -25,6 +25,9 @@ var turrets;
 
 var explosion;
 
+var pGraphics;
+
+
 var gui;
 
 var font1;
@@ -48,7 +51,6 @@ function preload(){
     explosion = new Tileset(loadImage("Assets/Explosion.png"), 96, 96)
     font1 = loadFont("assets/Fonts/corbert.otf");
     loadXML("assets/Map/map.tmx", populate);
-
 }
 
 function add1(){
@@ -90,6 +92,7 @@ function addtext(text){
 function setup() {
     createCanvas(CANVWIDTH, CANVHEIGHT);
     // turn off HPDI displays (like retina)
+
     inits();
 
     T_RESPONSE = new Response();
@@ -144,7 +147,7 @@ function setup() {
     var tff = win.addTextfield("", 2, win.topbarHeight+1, 300,100);
     tff.updateText("Numbers: ")
     tff.fontSize = 16;
-    tff.horizAlign = RIGHT
+    tff.horizAlign = LEFT;
 
     var slid = win.addSlider(2 + 300, win.topbarHeight+1, 100, DOWN);
     slid.func = tff.setOffsetY.bind(tff);
@@ -167,7 +170,10 @@ function setup() {
     win = new GraphicsWindow(100,100,500,400, true, false);
     var oldWin2 = win;
     gui.addWindow(win);
-    var tf = win.addTextfield("", 2, win.topbarHeight+10, 300,100);
+    var tf = win.addTextfield("Bajsbarn osv", 2, win.topbarHeight+1, 300,100);
+
+
+
     /*tf.updateText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce venenatis tortor dui, nec vehicula nunc auctor et. Morbi vitae nibh eu quam lacinia iaculis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nunc tincidunt hendrerit sollicitudin. Integer tortor massa, varius ut eleifend ut, maximus quis felis. Pellentesque porta et tortor at tincidunt. Quisque posuere nec magna sit amet sodales. Praesent ultrices mauris eu risus mollis, blandit commodo quam volutpat. Ut dapibus dolor eget lectus sollicitudin sagittis. Nullam pretium, lorem in luctus ultrices, augue augue efficitur mauris, sed auctor tortor nisi et nulla. Aenean suscipit ex eget augue convallis scelerisque. Quisque ultricies libero sit amet eros imperdiet venenatis.");
     tf.horizAlign = CENTER;
     tf.vertAlign = CENTER;*/
@@ -357,5 +363,6 @@ function draw() {
     fill(255);
     text("FPS: " + getFrameRate().toFixed(2) + " | VEL: " + player.vel.mag().toFixed(2), 10, height - 20);
     pop();
+
 
 }

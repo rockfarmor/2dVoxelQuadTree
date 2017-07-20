@@ -244,6 +244,7 @@ var GraphicsWindow = function(x, y, width, height, open = true, isStatic = true)
     this.addTextfield = function(text, x, y, width = -1, height = -1) {
         var tField = new GraphicsTextField(text, x, y, width, height, this)
         this.textFields.push(tField);
+
         return tField;
     }
 
@@ -403,6 +404,9 @@ var GraphicsTextField = function(textt, x, y, width = -1, height = -1, parent = 
     this.parent = parent;
 
     this.graphics = createGraphics(this.width, this.height);
+    this.graphics.pixelDensity(1);
+    console.log(this.graphics.height)
+    console.log(this.graphics.width)
     this.offsetY = 0;
 
     this.horizAlign = LEFT;
@@ -453,24 +457,17 @@ var GraphicsTextField = function(textt, x, y, width = -1, height = -1, parent = 
             offsetY += parent.y;
         }
 
-
         //fill(50, 50, 50, 10);
         //rect(this.x + offsetX, this.y + offsetY, this.width, this.height)
         //image(this.mask, offsetX, offsetY - this.offsetY)
-        var density = displayDensity();
-        this.graphics.pixelDensity(density);
 
-
-        for (var i = 0; i < 10; i++) {
-            this.graphics.fill(255,0,0)
-            this.graphics.rect(i + 10, 20, 2, 2)
-        }
+        this.graphics.clear();
 
         if (this.color == null)
             this.graphics.fill(50);
         else
             this.graphics.fill(this.color);
-        /*if (this.font == null)
+        if (this.font == null)
             this.graphics.textFont(gStyle.font);
         else
             this.graphics.textFont(this.font);
@@ -478,18 +475,15 @@ var GraphicsTextField = function(textt, x, y, width = -1, height = -1, parent = 
         this.graphics.textSize(this.fontSize);
 
 
-        this.graphics.textAlign(this.horizAlign, this.vertAlign)*/
+        this.graphics.textAlign(this.horizAlign, this.vertAlign)
 
-
-        this.graphics.background(255,255,255,0)
         this.graphics.textSize(12);
 
-        /*if (this.width <= 0) {
-            this.graphics.text(this.text, 0, 0);
+        if (this.width <= 0) {
+            this.graphics.text(this.text, 0, this.offsetY);
         } else {
-            this.graphics.text(this.text, 0, 20, this.width);
-        }*/
-        this.graphics.text(this.text, 0, 20, this.width);
+            this.graphics.text(this.text, 0, this.offsetY, this.width);
+        }
 
         image(this.graphics, this.x + offsetX, this.y + offsetY)
     }
@@ -500,10 +494,10 @@ var GraphicsSlider = function(x, y, length, align, min = 0, max = 1, step = 0.1,
     this.x = x;
     this.y = y;
     this.length = length;
-    this.thickness = 2;
+    this.thickness = 4;
     this.align = align;
 
-    this.value = 0.5;
+    this.value = 0;
 
     this.parent = parent;
 
@@ -522,7 +516,9 @@ var GraphicsSlider = function(x, y, length, align, min = 0, max = 1, step = 0.1,
                 offsetY = this.parent.y;
             }
             //var val = (this.value - this.min)/(this.max - this.min)
-            var val = map((mouseY - this.y - offsetY) / this.max, 0, this.length, this.min, this.max);
+            var val = (mouseY - this.y - offsetY) / this.max;
+            val = map(val, 0, this.length, this.min, this.max);
+            val = GraphicsRound(val, this.step)
             this.value = val;
 
             if (this.func) {
@@ -593,4 +589,10 @@ function hexToB(h) {
 
 function cutHex(h) {
     return (h.charAt(0) == "#") ? h.substring(1, 7) : h
+}
+
+function GraphicsRound(value, step) {
+    step || (step = 1.0);
+    var inv = 1.0 / step;
+    return Math.round(value * inv) / inv;
 }
