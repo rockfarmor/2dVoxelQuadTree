@@ -3,69 +3,10 @@
 
 <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.dom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.sound.min.js"></script>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-
-    <script src="p5sat.js"></script>
-    <script src="p5.graphicsUi.js"></script>
-
     <script src="sketch.js"></script>
-    <script src="Hero.js"></script>
-    <script src="Collide.js"></script>
-    <script src="Platform.js"></script>
-    <script src="Helper.js"></script>
-    <script src="Debugger.js"></script>
-    <script src="tiled.js"></script>
-    <script src="Animation.js"></script>
-    <script src="Mob.js"></script>
-    <script src="Particle.js"></script>
-    <script src="Turret.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <style>
-        body {
-            padding: 0;
-            margin: 0;
-        }
-    </style>
+
 </head>
 
 <body>
-
-    <div style ="height: 10px;"></div>
-    <div class="container">
-        <div class="jumbotron" style="padding: 10px; width: 820px">
-            <div id="sketch-holder" style="width: 800px; height: 500px;"></div>
-            <input type="color" id="myColor">
-            <br />
-            <button onclick="changeGui('bg')">Change Gui Background</button>
-            <br />
-            <button onclick="changeGui('button')">Change Gui Button-Background</button>
-            <br />
-            <button onclick="changeGui('bg')">Change Gui Background</button>
-            <script>
-                function changeGui(what){
-                    var clr = hexToP5Color(document.getElementById("myColor").value);
-                    if (what == "bg"){
-                        gui.graphicsUiStyle.setBackgroundColor(clr);
-                    } else if (what == "button"){
-                        gui.graphicsUiStyle.setButtonColor(clr);
-                    }
-                }
-            </script>
-
-
-        </div>
-
-    </div><!--/.container-->
 </body>
-
 </html>
