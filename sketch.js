@@ -1,5 +1,5 @@
 /*
- * This comment is to test something with git
+ * This comment is to test something with git TEST
  */
 
 let CanvSize = 256 * 3
