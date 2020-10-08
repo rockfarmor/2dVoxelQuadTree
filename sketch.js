@@ -1,4 +1,8 @@
-CanvSize = 256 * 3
+/*
+ * This comment is to test something with git
+ */
+
+let CanvSize = 256 * 3
 let qts;
 let wire;
 let mVal;
