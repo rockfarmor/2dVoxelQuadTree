@@ -119,7 +119,7 @@ function draw() {
             drawQuad(qt);
         qt.draw()
     }
-    
+
     stroke(255)
     text(int(frameRate()), 10,10);
     text("color: " + mVal + " Wiredframe: " + wire, 10,20);
@@ -213,6 +213,7 @@ class QuadTree {
 
     combine(){
         if(this.childValueSame()){
+
             this.val = this.nw.val
             this.nw = null;
             this.ne = null;
@@ -235,13 +236,27 @@ class QuadTree {
 
     childValueSame(){
         if(this.divided){
-            let nwv = this.nw.val
-            let nev = this.ne.val
-            let swv = this.sw.val
-            let sev = this.se.val
-            if(this.allChildDevided)
+
+
+            if(this.nw != null && this.ne != null && this.sw != null && this.se != null){
+                let nwv = this.nw.val
+                let nev = this.ne.val
+                let swv = this.sw.val
+                let sev = this.se.val
+                if(!this.nw.divided && !this.ne.divided && !this.sw.divided && !this.se.divided){
+                    if(nwv == nev && nwv == swv && nwv == sev)
+                        return true
+                }
+
+
+            }
+
+            /*
+            if(!this.allChildDevided){
+                print(this)
                 if(nwv == nev && nwv == swv && nwv == sev)
                     return true
+            }*/
         }
 
         return false;
