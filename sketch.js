@@ -1,7 +1,8 @@
-CanvSize = 700
+CanvSize = 256 * 3
 let qts;
 let wire;
 let mVal;
+let bigBrush = false;
 
 let clrs;
 
@@ -10,10 +11,23 @@ function setup() {
     createCanvas(CanvSize, CanvSize);
     frameRate(120)
 
-    let qt1 = new QuadTree(256, 100,300)
-    let qt2 = new QuadTree(256, 100+256,300)
-    let qt3 = new QuadTree(256, 100,300-256)
-    let qt4 = new QuadTree(256, 100+256,300-256)
+    let org = 256 / 2
+
+    //Create qts
+    qts = []
+    for (var y = 0; y < 3; y++) {
+        for (var x = 0; x < 3; x++) {
+            let qt = new QuadTree(256,org + x*256, org + y*256)
+            qts.push(qt)
+        }
+    }
+
+
+
+    //let qt1 = new QuadTree(256, org,300)
+    //let qt2 = new QuadTree(256, org+256,300)
+    //let qt3 = new QuadTree(256, org,300-256)
+    //let qt4 = new QuadTree(256, org+256,300-256)
 
     let c1 = color(255,0,0)
     let c2 = color(0,255,0)
@@ -22,7 +36,6 @@ function setup() {
 
 
     clrs = [c1,c2,c3,c4];
-    qts = [qt1, qt2,qt3,qt4]
     wire = true
     mVal = 1
 }
@@ -67,7 +80,7 @@ function drawQuad(qt){
 
         let t = false
 
-        if(t){
+        if(bigBrush){
             for (var i = -4; i <= 4; i++) {
                 for (var j = -4; j <= 4; j++) {
                     qt.insert(mx+i,my+j,mVal)
@@ -99,16 +112,17 @@ function updateTimer(){
 
 function draw() {
     background(50)
-    stroke(255)
-    text(int(frameRate()), 10,10);
-    text("color: " + mVal + " Wiredframe: " + wire, 10,20);
+
     for (var i = 0; i < qts.length; i++) {
         let qt = qts[i]
         if(mDown)
             drawQuad(qt);
         qt.draw()
     }
-
+    
+    stroke(255)
+    text(int(frameRate()), 10,10);
+    text("color: " + mVal + " Wiredframe: " + wire, 10,20);
 
 
 
