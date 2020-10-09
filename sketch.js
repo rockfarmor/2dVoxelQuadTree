@@ -8,9 +8,20 @@ let wire;
 let mVal;
 let bigBrush = false;
 
+let atlas;
+
+let dirt;
+let stone;
+let grass;
+
 let clrs;
 
 let mDown;
+
+function preload() {
+    atlas = loadImage("Assets/terrain.png")
+}
+
 function setup() {
     createCanvas(CanvSize, CanvSize);
     frameRate(120)
@@ -128,7 +139,7 @@ function draw() {
     text(int(frameRate()), 10,10);
     text("color: " + mVal + " Wiredframe: " + wire, 10,20);
 
-
+    //image(atlas,10,10);
 
 
     //printQuadValue();
@@ -321,7 +332,9 @@ class QuadTree {
             stroke(255)
         rectMode(CENTER)
         if(this.val > 0){
-            fill(getColor(this.val))
+            //fill(getColor(this.val))
+            image(atlas, this.x - this.size/2, this.y - this.size/2, this.size, this.size,imgX(this.val), imgY(this.val), 16,16)
+
         }
         rect(this.x, this.y, this.size, this.size)
         if(this.divided){
@@ -331,6 +344,18 @@ class QuadTree {
             this.se.draw()
         }
     }
+}
+
+
+function imgX(val){
+    if(val > 0 && val <= 4){
+        return val * 16
+    }
+    return 0;
+}
+
+function imgY(val){
+    return 0;
 }
 
 function getColor(val){
