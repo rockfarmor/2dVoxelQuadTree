@@ -9,7 +9,7 @@ let mVal;
 let bigBrush = false;
 
 let atlas;
-
+let bimg;
 let dirt;
 let stone;
 let grass;
@@ -20,14 +20,15 @@ let mDown;
 
 function preload() {
     atlas = loadImage("Assets/terrain.png")
+
 }
 
 function setup() {
     createCanvas(CanvSize, CanvSize);
-    frameRate(120)
+    frameRate(60)
 
     let org = 256 / 2
-
+    bimg = new BlockImage(atlas)
     //Create qts
     qts = []
     for (var y = 0; y < 3; y++) {
@@ -139,8 +140,9 @@ function draw() {
     text(int(frameRate()), 10,10);
     text("color: " + mVal + " Wiredframe: " + wire, 10,20);
 
-    //image(atlas,10,10);
 
+
+    //print(bimg.images)
 
     //printQuadValue();
 
@@ -331,10 +333,11 @@ class QuadTree {
         if(wire)
             stroke(255)
         rectMode(CENTER)
-        if(this.val > 0){
+        if(this.val > 0 && this.val <= 4){
             //fill(getColor(this.val))
-            image(atlas, this.x - this.size/2, this.y - this.size/2, this.size, this.size,imgX(this.val), imgY(this.val), 16,16)
-
+            //image(atlas, this.x - this.size/2, this.y - this.size/2, this.size, this.size,imgX(this.val), imgY(this.val), 16,16)
+            //image()
+            image(bimg.images[this.val][this.size],this.x - this.size/2, this.y - this.size/2)
         }
         rect(this.x, this.y, this.size, this.size)
         if(this.divided){
@@ -362,4 +365,44 @@ function getColor(val){
     if(val >= 1 && val <= 4)
         return clrs[val-1]
     return color(255,0,0)
+}
+
+class BlockImage {
+
+    constructor(atlas) {
+
+        this.images = []
+
+        for (var i = 0; i < 5; i++) {
+            let obj = {}
+            for (var j = 2; j < 9; j++) {
+                let v = (2**j)
+                let img = createGraphics(v,v);
+                //image(atlas, this.x - this.size/2, this.y - this.size/2, this.size, this.size,imgX(this.val), imgY(this.val), 16,16)
+
+                let n = v/4;
+                img.noStroke()
+                img.fill(255,0,0)
+                img.rect(0,0,v,v)
+                for (var y = 0; y < n; y++) {
+                    for (var x = 0; x < n; x++) {
+                        img.image(atlas,x*4,y*4, 4,4, imgX(i), imgY(i), 16,16)
+                    }
+                }
+
+
+                obj[v] = img
+
+            }
+            this.images.push(obj)
+
+
+
+
+        }
+
+
+
+    }
+
 }
